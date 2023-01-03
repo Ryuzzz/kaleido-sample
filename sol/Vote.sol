@@ -1,0 +1,67 @@
+pragma solidity 0.4.24;
+
+contract Vote {
+    // structure
+    struct candidator {
+        string name;
+        uint upVote;
+    }
+
+    // variable
+    candidator[] public candidatorList;
+    bool isVoting;
+    address owner;
+
+    // mapping
+    mapping(address => bool) voted; 
+
+    // event
+    event addCandidatorEvent(string name);
+    event votingEvent(string candidatorName, uint candidatorUpVote);
+    event finishVoteEvnet(bool isVoting);
+    event startVoteEvent(address owner);
+
+    // modifier
+    modifier onlyOwner {
+        require(msg.sender == owner);
+        _;
+    }
+
+    // constructor
+    constructor() public {
+        owner = msg.sender;
+        isVoting = true;
+
+        emit startVoteEvent(owner);
+    }
+    
+    // add candidator
+    function addCandidator(string name) public onlyOwner {
+        require(isVoting == true);
+        require(candidatorList.length < 5);
+        candidatorList.push(candidator(name, 0));
+
+        emit addCandidatorEvent(name);
+    }
+
+    // voting
+    function voting(uint indexOfCandidator) public {
+        require(isVoting == true);
+        require(voted[msg.sender] == false);
+        require(indexOfCandidator < candidatorList.length);
+        candidatorList[indexOfCandidator].upVote++;
+
+        voted[msg.sender] = true;
+
+        emit votingEvent(candidatorList[indexOfCandidator].name, candidatorList[indexOfCandidator].upVote);
+    }
+
+    // finish vote
+    function finishVote() public onlyOwner {
+        require(isVoting == true);
+        isVoting = false;
+
+        emit finishVoteEvnet(isVoting);
+    }
+
+}
