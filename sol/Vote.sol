@@ -8,7 +8,7 @@ contract Vote {
     }
 
     // variable
-    candidator[] public candidatorList;
+    candidator[] candidatorList;
     bool isVoting;
     address owner;
 
@@ -62,6 +62,11 @@ contract Vote {
         isVoting = false;
 
         emit finishVoteEvnet(isVoting);
+    }
+    
+    function result(uint indexOfCandidator) public view returns (string name, uint upVote) {
+        name = candidatorList[indexOfCandidator].name;
+        upVote = candidatorList[indexOfCandidator].upVote;
     }
 
 }
