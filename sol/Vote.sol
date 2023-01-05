@@ -4,13 +4,14 @@ contract Vote {
     // structure
     struct candidator {
         string name;
-        uint upVote;
+        uint upVote;        
     }
 
     // variable
     candidator[] candidatorList;
     bool isVoting;
     address owner;
+    address[] voterList;
 
     // mapping
     mapping(address => bool) voted; 
@@ -18,7 +19,7 @@ contract Vote {
     // event
     event addCandidatorEvent(string name);
     event votingEvent(string candidatorName, uint candidatorUpVote);
-    event finishVoteEvnet(bool isVoting);
+    event finishVoteEvent(bool isVoting, address[] voterList);
     event startVoteEvent(address owner);
 
     // modifier
@@ -52,7 +53,7 @@ contract Vote {
         candidatorList[indexOfCandidator].upVote++;
 
         voted[msg.sender] = true;
-
+        voterList.push(msg.sender);
         emit votingEvent(candidatorList[indexOfCandidator].name, candidatorList[indexOfCandidator].upVote);
     }
 
@@ -61,7 +62,7 @@ contract Vote {
         require(isVoting == true);
         isVoting = false;
 
-        emit finishVoteEvnet(isVoting);
+        emit finishVoteEvent(isVoting, voterList);
     }
     
     function result(uint indexOfCandidator) public view returns (string name, uint upVote) {
